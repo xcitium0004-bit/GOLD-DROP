@@ -1,0 +1,26 @@
+{
+  "name": "골드드롭 - 행운의 숫자 낙하 퍼즐",
+  "short_name": "골드드롭",
+  "description": "블록을 떨어뜨려 연쇄로 터뜨리는 단계 미션 퍼즐! 하루 한 번 행운 룰렛까지.",
+  "lang": "ko",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b2e25",
+  "theme_color": "#0b2e25",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b2e25" />
+  <meta name="robots" content="index,follow" />
+
+  <!-- ═══ SEO: 검색엔진·애드센스 심사에 중요한 부분입니다 ═══ -->
+  <title>골드드롭 | 행운의 숫자 낙하 퍼즐 - 설치 없이 무료 플레이</title>
+  <meta name="description" content="블록을 떨어뜨려 연쇄로 터뜨리는 단계 미션 퍼즐! 클리어 보상 두배 도전, 하루 한 번 행운 룰렛, 황금코인 사냥까지. 회원가입·다운로드 없이 브라우저에서 바로 즐기는 무료 웹게임." />
+  <meta name="keywords" content="무료게임, 숫자퍼즐, 합치기게임, 미니게임, 킬링타임게임, 웹게임, 공짜게임, 머지게임, 퍼즐게임, 룰렛게임" />
+
+  <!-- 카톡/SNS 공유 시 보이는 미리보기 카드 -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="골드드롭 - 떨어뜨릴 때마다 심장이 뛰는 숫자 퍼즐" />
+  <meta property="og:description" content="떨어뜨리고 · 합치고 · 연쇄폭발! 황금코인을 부수고 보상은 두배 도전으로 불려라." />
+  <meta property="og:image" content="./icons/icon-512.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/png" href="./icons/favicon.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <!-- 한글 아케이드 폰트 (오프라인 시 기본 서체로 자동 대체됩니다) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&display=swap" rel="stylesheet" />
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║ [애드센스 ①단계] 사이트 인증 코드 넣는 자리             ║
+       ║ 애드센스가 발급한 meta 태그를 아래 주석 해제하고 붙여넣으세요 ║
+       ║ (자세한 방법은 README.md STEP 3 참고)                   ║
+       ╚══════════════════════════════════════════════════════╝
+  <meta name="google-adsense-account" content="ca-pub-★★★★내ID★★★★">
+  -->
+</head>
+
+<body>
+  <!-- ───────────────── 상단 배너 광고 자리 ─────────────────
+       애드센스 승인 후 [광고 → 단위별 광고 → 디스플레이] 코드를
+       아래 div 안(주석 다음 줄)에 그대로 붙여넣으면 됩니다.
+       ※ 심사 "전에는 비워두세요". (README.md STEP 4 참고)        -->
+  <div class="ad-slot ad-top" aria-label="광고">
+    <!-- ▼▼▼ 여기에 상단 광고 단위 코드 붙여넣기 ▼▼▼
+
+         ▲▲▲ 여기까지 ▲▲▲ -->
+  </div>
+
+  <main class="game-wrap">
+    <!-- ═══ 상단 정보 바 (점수 + 미션 진행바) ═══ -->
+    <header class="hud">
+      <div class="hud-left">
+        <div class="score-main">
+          <span class="lbl">SCORE</span><span id="score">0</span>
+          <span class="gem-count" title="보유 젬">
+            <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M12 2l6 6-6 14L6 8z" fill="#ffc93c" stroke="#1a130c" stroke-width="1.6"/><path d="M6 8h12M9.5 5.5L12 8l2.5-2.5" fill="#fff3c9" opacity=".7"/></svg>
+            <b id="gemCount">0</b>
+          </span>
+        </div>
+        <div class="mission">
+          <div class="mission-head">
+            <span>이번 단계 목표: <b id="targetText">0 / 420</b></span>
+            <span>최고 <b id="best">0</b></span>
+          </div>
+          <div class="bar"><div class="bar-fill" id="progressFill"></div></div>
+          <div class="pills" style="margin-top:6px;">
+            <span class="pill stage">STAGE <b id="stageNum">1</b></span>
+            <span class="pill drops">남은 드롭 <b id="dropsLeft">22</b></span>
+            <span class="pill fever-pill"><i id="feverTag" hidden>피버!</i></span>
+          </div>
+        </div>
+        <div class="fever-bar" title="피버 게이지"><div id="heatFill"></div></div>
+      </div>
+
+      <div class="hud-tiles">
+        <div class="chip-wrap"><span class="chip-lbl">현재</span><span class="chip" id="tileCur">1</span></div>
+        <div class="chip-wrap"><span class="chip-lbl">다음</span><span class="chip next" id="tileNext">2</span></div>
+      </div>
+
+      <nav class="hud-btns">
+        <button id="btnSound" aria-label="소리 켜고 끄기">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/>
+            <path class="snd-wave" d="M16.5 8.5c1.6 1 2.4 2.3 2.4 3.5s-.8 2.5-2.4 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path class="snd-mute" d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="display:none"/>
+          </svg>
+        </button>
+        <button id="btnPause" aria-label="일시정지">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="5" width="4.5" height="14" rx="1.4" fill="currentColor"/>
+            <rect x="13.5" y="5" width="4.5" height="14" rx="1.4" fill="currentColor"/>
+          </svg>
+        </button>
+      </nav>
+    </header>
+
+    <!-- ═══ 게임판 ═══ -->
+    <section class="board-area" aria-label="게임 영역">
+      <div class="board-frame">
+        <canvas id="board"></canvas>
+
+        <!-- 콤보 배너 -->
+        <div id="comboBanner" aria-live="polite"></div>
+
+        <!-- 시작 화면 -->
+        <div class="overlay show" id="ovMenu">
+          <h1 class="logo"><em>골드</em>드롭</h1>
+          <p class="tagline">떨어뜨릴 때마다 심장이 뛰는 숫자 퍼즐</p>
+          <ul class="rules">
+            <li>탭한 열로 숫자 블록 낙하, 같은 숫자가 닿으면 합쳐짐</li>
+            <li><b>제한 드롭</b> 안에 목표 점수 달성 → 별 1~3개 + 젬 보상</li>
+            <li>황금코인을 폭파 범위에 말면 <b>젬</b> 득템!</li>
+            <li>클리어 보상을 건 <b>두배 도전</b>, 하루 1회 <b>행운 룰렛</b></li>
+          </ul>
+          <button id="btnStart" class="cta hot">바로 출발</button>
+          <button id="btnWheelOpen" class="cta wheel-btn">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" fill="#ffc93c" stroke="#1a130c" stroke-width="2"/>
+              <circle cx="12" cy="12" r="2.4" fill="#1a130c"/>
+              <path d="M12 2v7M22 12h-7M12 22v-7M2 12h7" stroke="#1a130c" stroke-width="1.6"/>
+              <path d="M15 3l-2.2 4.5M19 7.5L15 9.7M21 16.5L16.2 14" stroke="#d99a1c" stroke-width="1.6" stroke-linecap="round"/>
+              <circle cx="17" cy="17" r="1.6" fill="#d99a1c"/><circle cx="7" cy="17" r="1.6" fill="#ff5e5b"/>
+              <circle cx="7" cy="7" r="1.6" fill="#57c8ff"/><circle cx="17" cy="7" r="1.6" fill="#43d68c"/>
+            </svg>
+            오늘의 행운 룰렛
+            <i class="dot-badge" id="wheelBadge" hidden></i>
+          </button>
+
+          <!-- 오늘의 미션 (자동 수령) -->
+          <div class="mission-row" id="missionRow">
+            <span class="mission-row-title">오늘의 미션</span>
+            <div class="mission-chips" id="missionChips"></div>
+          </div>
+
+          <p class="mini stats-line">
+            최고 <b id="menuBest">0</b>점 · 누적 별 <b id="menuStars">0</b>개 · 최고 단계 <b id="menuStage">0</b> · 연쇄 기록 <b id="menuChain">0</b>
+          </p>
+          <p class="mini access-note">출석 스트릭 <b id="streakDays">1</b>일차 — 매일 들를수록 룰렛 운이 좋아져요*</p>
+        </div>
+
+        <!-- 일시정지 화면 -->
+        <div class="overlay" id="ovPause">
+          <h2>잠깐 쉬어가기</h2>
+          <button id="btnResume" class="cta">계속하기</button>
+          <div class="row">
+            <button id="btnQuit" class="ghost">새 게임</button>
+            <button id="btnMenuPause" class="ghost">메뉴로</button>
+          </div>
+          <button id="btnSoundP" class="ghost" aria-label="소리 켜고 끄기" style="display:inline-flex;align-items:center;gap:7px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/>
+              <path class="snd-wave" d="M16.5 8.5c1.6 1 2.4 2.3 2.4 3.5s-.8 2.5-2.4 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path class="snd-mute" d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="display:none"/>
+            </svg>
+            <span>소리 켜고 끄기</span>
+          </button>
+        </div>
+
+        <!-- 단계 클리어 화면 (+ 두배 도전) -->
+        <div class="overlay" id="ovClear">
+          <h2 id="clearTitle">STAGE 1 클리어!</h2>
+          <div class="stars-row" aria-hidden="true">
+            <svg class="star-big" id="cs1" viewBox="0 0 24 24"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.2 1.3-6.6L2.5 9l6.6-.8z" fill="#ffc93c" stroke="#1a130c" stroke-width="1.6"/></svg>
+            <svg class="star-big" id="cs2" viewBox="0 0 24 24"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.2 1.3-6.6L2.5 9l6.6-.8z" fill="#ffc93c" stroke="#1a130c" stroke-width="1.6"/></svg>
+            <svg class="star-big" id="cs3" viewBox="0 0 24 24"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.2 1.3-6.6L2.5 9l6.6-.8z" fill="#ffc93c" stroke="#1a130c" stroke-width="1.6"/></svg>
+          </div>
+          <div class="clear-info">
+            <span id="clearBonus">클리어 보상 준비 중...</span><br/>
+            <b id="nextTarget"></b>
+          </div>
+
+          <!-- ── 두배 도전 패널 ── -->
+          <div class="du-panel" id="duPanel">
+            <p class="du-q" id="duQuestion">이번 클리어 보상 <b>0젬</b>. 그대로 가져갈까요?</p>
+            <div class="du-board-wrap">
+              <div class="du-pointer" id="duPointer"></div>
+              <div class="du-dial" id="duDial">
+                <div class="du-hub"><span id="duHubTxt">?</span></div>
+              </div>
+            </div>
+            <p class="du-result" id="duResult" hidden></p>
+            <div class="row" id="duBtns">
+              <button id="btnDuSafe" class="cta cool">안전하게 수령</button>
+              <button id="btnDuGo" class="cta hot">두배 도전!</button>
+            </div>
+            <p class="mini" id="duHint">도전 성공 시 보상 2배(기회 3번까지). 실패하면 이번 보상만 사라져요.</p>
+          </div>
+
+          <button id="btnNext" class="cta cool">다음 단계</button>
+        </div>
+
+        <!-- 게임오버 화면 (+ 보석 상자) -->
+        <div class="overlay" id="ovOver">
+          <h2>이번 판 종료!</h2>
+          <span id="newBestBadge">신기록 달성!</span>
+          <p class="over-note" id="overReason"></p>
+          <div class="result">
+            <div><span class="lbl">이번 점수</span><b id="finalScore">0</b></div>
+            <div><span class="lbl">최고 기록</span><b id="finalBest">0</b></div>
+            <div><span class="lbl">도달 단계</span><b id="finalStage">1</b></div>
+            <div><span class="lbl">최고 연쇄</span><b id="finalChain">0</b></div>
+          </div>
+
+          <!-- ── 마감 보석 상자 ── -->
+          <div class="chest-zone" id="chestZone">
+            <p class="chest-title">마감 선물 — 비밀 상자를 열어보세요</p>
+            <div class="chest-cards" id="chestCards">
+              <div class="chest-card"><div class="cc-back">?</div><div class="cc-face"></div></div>
+              <div class="chest-card"><div class="cc-back">?</div><div class="cc-face"></div></div>
+              <div class="chest-card"><div class="cc-back">?</div><div class="cc-face"></div></div>
+            </div>
+            <p class="chest-result" id="chestResult">&nbsp;</p>
+            <button id="btnChestMore" class="cta rewarded" style="display:none;">광고 보고 상자 한 번 더</button>
+          </div>
+
+          <button id="btnRevive" class="cta rewarded">광고 보고 무료 부활</button>
+          <button id="btnReviveGem" class="cta gem-revive" style="display:none;"></button>
+          <button id="btnAgain" class="cta hot">다시 도전</button>
+          <div class="row">
+            <button id="btnMenuFromOver" class="ghost">메뉴로</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <noscript>
+      <p style="text-align:center;padding:16px;color:#f4ecdd;">
+        이 게임은 JavaScript를 사용합니다. 브라우저 설정에서 JavaScript를 허용해 주세요.
+      </p>
+    </noscript>
+  </main>
+
+  <!-- ───────────────── 하단 배너 광고 자리 ───────────────── -->
+  <div class="ad-slot ad-bottom" aria-label="광고">
+    <!-- ▼▼▼ 여기에 하단 광고 단위 코드 붙여넣기 ▼▼▼
+
+         ▲▲▲ 여기까지 ▲▲▲ -->
+  </div>
+
+  <!-- ╔══════════════════════════════════════════════════╗
+       ║ 스폰서 화면 (전면광고가 실제로 들어오는 자리)        ║
+       ║ 아래 adRealBox 에 [전면형 디스플레이 광고 단위] 코드를 ║
+       ║ 붙여넣으면 실제 광고가 표시됩니다.                    ║
+       ╚══════════════════════════════════════════════════╝ -->
+  <div class="ad-overlay" id="ovAd" aria-label="광고">
+    <div class="ad-panel">
+      <div class="ad-tag">AD · SPONSORED</div>
+      <div class="ad-body" id="adRealBox">
+        <!-- ▼▼▼ 전면형 광고 단위 코드 붙여넣기 ▼▼▼
+
+             ▲▲▲ 여기까지 ▲▲▲ -->
+      </div>
+      <div class="ad-body" id="adTestPanel" style="display:none;">
+        <div class="ad-test-inner">
+          <strong>스폰서 화면</strong><br/>
+          광고 코드를 넣으면 이 자리에 표시됩니다<br/>
+          <small>(설정 방법은 README 문서 참고)</small>
+        </div>
+      </div>
+      <button class="ghost ad-close" disabled>닫기</button>
+    </div>
+  </div>
+
+  <!-- ╔══════════════════════════════════════════════════╗
+       ║ 시청 보상형 광고 오버레이 - 부활/상자 재도전용       ║
+       ║ 실서비스: window.MDRewarded 어댑터 또는               ║
+       ║ H5 Games Ads 리워드 유닛 연결 (README 참고)          ║
+       ╚══════════════════════════════════════════════════╝ -->
+  <div class="ad-overlay" id="ovReward" aria-label="광고">
+    <div class="ad-panel">
+      <div class="ad-tag">AD · REWARDED</div>
+      <div class="ad-body" id="adRewardBox">
+        <!-- ▼▼▼ 리워드형 광고 단위 코드(H5 Games Ads 등) ▼▼▼
+
+             ▲▲▲ 여기까지 ▲▲▲ -->
+        <div class="ad-test-inner" style="border-style:solid;">
+          <div class="spin"></div>
+          광고 로딩 중...
+        </div>
+      </div>
+      <p class="mini" id="rewardStatus" style="padding:0 14px;">광고를 시청하면 보상을 받습니다.</p>
+      <button class="cta rewarded ad-close-btn" id="btnClaimReward" style="display:none;">보상 받기</button>
+    </div>
+  </div>
+
+  <!-- ═══ 오늘의 행운 룰렛 ═══ -->
+  <div class="wheel-overlay" id="ovWheel">
+    <div class="wheel-panel">
+      <h2 class="wheel-title">오늘의 행운 룰렛</h2>
+      <p class="wheel-streak" id="wheelStreak">연속 출석 1일차 · 남은 기회 확인 중...</p>
+      <div class="wheel-stage">
+        <div class="wheel-pointer-tri" id="wheelTri"></div>
+        <canvas id="wheelCanvas" width="300" height="300"></canvas>
+        <div class="wheel-center-gem">
+          <svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 2l6 6-6 14L6 8z" fill="#ffc93c" stroke="#1a130c" stroke-width="1.8"/></svg>
+        </div>
+      </div>
+      <p class="wheel-result" id="wheelResult">버튼을 누르면 돌아갑니다!</p>
+      <button id="btnSpin" class="cta hot">룰렛 돌리기</button>
+      <button id="btnWheelClose" class="ghost">닫기</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ SEO용 소개/이용법/FAQ ═══════════════════ -->
+  <article class="content">
+    <section>
+      <h2>골드드롭(GoldDrop)은 어떤 게임?</h2>
+      <p>
+        골드드롭은 지하철 안, 점심시간 5분, 잠들기 직전 짬짬이 시간을 위한
+        <strong>설치 없이 바로 즐기는 무료 웹 퍼즐게임</strong>입니다. 규칙은 심플합니다.
+        탭한 열로 숫자 블록을 떨어뜨리고, 같은 숫자끼리 닿으면 하나로 합쳐지며 값이 두 배가 됩니다.
+        합쳐진 자리 위 블록들이 내려앉으면서 또 다른 머지를 만들어내는 <strong>연쇄(chain)</strong>가
+        이 게임의 백미로, 연쇄 배율은 단일 머지 0.6배에서 시작해 2배 → 4배 → 7배 → 11배 → 16배까지
+        폭증하기 때문에 아무 데나 놓는 사람과 코스를 설계하는 사람의 점수 차이가 하늘과 땅 차이입니다.
+      </p>
+      <p>
+        각 단계마다 목표 점수와 제한 드롭 횟수가 주어지고, 목표를 채우면 클리어와 함께
+        <strong>별 1~3개와 젬 보상</strong>이 지급됩니다. 여기서 끝이 아닙니다. 손에 넣은 클리어 보상을
+        그대로 가져갈지, 아니면 <strong>두배 도전</strong>에 걸어 배율을 불릴지 플레이어가 선택합니다.
+        성공할 때마다 보상이 통크게 불어나지만, 실패하면 그 회차 보상은 소멸. 성공 확률은 도전을
+        거듭할수록 줄어들어, '여기서 멈출까, 한 번 더 할까'를 고민하게 만듭니다.
+      </p>
+      <p>
+        매일 첫 접속 시 돌릴 수 있는 <strong>행운 룰렛</strong>이 젬을 퍼줍니다. 연속으로 접속하는
+        날이 많아질수록 큰 젬 구간이 등장할 때도 있어, 하루 한 번 들르는 재미가 쌓입니다. 판 위에는
+        가끔 <strong>황금코인</strong>이 떨어지는데, 머지 폭발 옆에 끼어 있으면 산산조각 나면서 점수와
+        젬을 뱉습니다. 4단계부터는 합쳐지지 않는 돌블록도 섞여 판 관리 능력을 요구합니다.
+      </p>
+      <p>
+        게임에 사용되는 모든 재화(점수·별·젬)는 <strong>현금과 무관한 가상의 게임 재화</strong>로,
+        현금 교환·구매 수단은 일절 없습니다. 부활 같은 편의 기능은 시청 보상형 광고 또는 게임 내에서
+        모은 젬으로만 이용할 수 있습니다.
+      </p>
+    </section>
+
+    <!-- ── 인아티클 광고 자리 (심사 통과 후 코드 붙여넣기) ──
+    <div class="ad-slot ad-inarticle">
+      ▼▼▼ 인아티클(기사 내 삽입) 광고 단위 코드 ▼▼▼
+    </div>
+    -->
+
+    <section>
+      <h2>조작 방법 (3초 완성)</h2>
+      <table>
+        <tr><th>스마트폰</th><td>열을 살짝 눌렀다 떼면 그 열로 블록 낙하. 드래그로 열을 옮겨 조준 가능</td></tr>
+        <tr><th>PC 마우스</th><td>커서 이동 = 조준 미리보기, 클릭 = 떨어뜨리기</td></tr>
+        <tr><th>PC 키보드</th><td>← → 열 선택, Space 낙하, Enter 시작·재시작, R 새 게임, Esc 일시정지, M 음소거</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>자주 묻는 질문 (FAQ)</h2>
+      <h3>Q. 두배 도전에서 자꾸 지는데, 확률이 조작된 건가요?</h3>
+      <p>A. 조작 없습니다. 설정값(config 파일) 그대로 첫 도전 46%, 두 번째 36%, 세 번째 26%로
+      도전할수록 좁아집니다. 힌트 문구에 나온 대로 반반보다 약간 낮은 확률이라 당첨 배수(2배씩 누적)와
+      맞물려 장기적으로는 '안전하게 수령'이 이득이지만, 언제 멈출지 고민하는 그 순간이 이 게임의 묘미입니다.</p>
+      <h3>Q. 행운 룰렛은 하루 몇 번 돌릴 수 있나요?</h3>
+      <p>A. 하루 1회 무료입니다. 날짜가 바뀌면 다시 돌릴 수 있고, 연속으로 접속한 일수(스트릭)에 따라
+      회전판 가중치가 조금씩 유리해집니다. 특정 구간만 노릴 수는 없지만, 평균 획득 젬은 메뉴에서 확인한
+      스트릭 일수에 비례해 살짝 올라갑니다.</p>
+      <h3>Q. 황금코인은 어떻게 부수나요?</h3>
+      <p>A. 코인 자체는 합쳐지지 않습니다. 대신 코인의 상하좌우 칸에서 머지가 일어나면 충격으로 파괴되며
+      점수(+60)와 젬(+2개)을 드립니다. 고수들은 코인 주변에 같은 숫자 두 개를 미리 배치해 '코인 폭파용
+      도화선'을 만드는 식으로 플레이합니다.</p>
+      <h3>Q. 돌블록은 왜 있으며, 어떻게 없애나요?</h3>
+      <p>A. 4단계부터 등장하는 장애물입니다. 코인과 달리 파괴 시 젬은 없고 점수(+80)만 줍니다. 원리는
+      같습니다. 돌 옆 칸에서 머지가 일어나면 부서집니다. 판이 절반 이상 찰 정도로 혼잡할 때는 특수
+      블록이 등장하지 않도록 밸런스 장치도 들어 있습니다.</p>
+      <h3>Q. 부활은 몇 번까지 가능한가요?</h3>
+      <p>A. 한 판(시작~종료) 동안 1회입니다. 부활하면 판 아래 2줄이 폭파되고 돌블록이 모두 제거되며
+      드롭이 다시 16개 지급됩니다. 광고 시청 외에도 게임에서 모은 젬 35개로 부활할 수 있습니다.</p>
+      <h3>Q. 젬을 사거나, 젬을 현금으로 바꿀 수 있나요?</h3>
+      <p>A. 둘 다 불가능합니다. 젬은 오직 게임 플레이(클리어 보상·코인 파괴·룰렛·미션)로만 얻는 가상
+      재화이며 구매·환전 기능이 없습니다. 부활 등 게임 내 편의에만 쓰입니다.</p>
+      <h3>Q. 인터넷 없이도 되나요?</h3>
+      <p>A. 처음 접속한 뒤에는 오프라인에서도 플레이됩니다(점수·젬 저장 포함). 다만 최초 폰트 로딩과
+      광고 표시에는 네트워크가 필요할 수 있습니다.</p>
+    </section>
+
+    <footer class="site-footer">
+      <p>© 2026 골드드롭 · 문의 및 건의는 언제든 환영합니다.</p>
+      <p><a href="./privacy.html">개인정보 처리방침</a></p>
+    </footer>
+  </article>
+
+  <!-- 게임 유형 정보 (검색엔진 구조화 데이터) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "골드드롭",
+    "description": "블록을 떨어뜨려 합치는 단계 미션 방식 무료 웹 퍼즐 게임",
+    "genre": ["Puzzle", "Casual"],
+    "gamePlatform": ["Web Browser", "Mobile Browser"],
+    "playMode": "SinglePlayer",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" }
+  }
+  </script>
+
+  <!-- 로딩 순서 중요: config → audio → economy → board → renderer → main -->
+  <script src="./js/config.js"></script>
+  <script src="./js/audio.js"></script>
+  <script src="./js/economy.js"></script>
+  <script src="./js/board.js"></script>
+  <script src="./js/renderer.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>
